@@ -4,7 +4,7 @@ jobs:
     environment:
       REPO_NAME: "wastrachan"
       IMAGE_NAME: "gandi-ddns"
-      IMAGE_VERSION: "1.0"
+      IMAGE_VERSION: "1.1"
     docker:
       - image: docker:latest
     steps:
