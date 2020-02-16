@@ -1,0 +1,47 @@
+version: 2
+jobs:
+  build:
+    environment:
+      IMAGE_NAME: wastrachan/docker-image-template
+    docker:
+      - image: docker:latest
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Install deps
+          command: |
+            apk --no-cache add curl
+      - run:
+          name: Build image
+          command: |
+            docker build -t $IMAGE_NAME:latest .
+      - deploy:
+          name: Publish image
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+              docker push $IMAGE_NAME:latest
+            fi
+      - run:
+          name: Update MicroBadger
+          command: |
+            curl -X POST "${MICROBADGER_URL}"
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: master
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only: master
+    jobs:
+      - build
