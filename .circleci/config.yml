@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     environment:
-      IMAGE_NAME: wastrachan/docker-image-template
+      IMAGE_NAME: wastrachan/docker-gandi-ddns
     docker:
       - image: docker:latest
     steps:
