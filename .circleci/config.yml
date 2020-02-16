@@ -19,14 +19,14 @@ jobs:
           command: |
             docker build -t $IMAGE_NAME .
             docker tag $IMAGE_NAME $REPO_NAME/$IMAGE_NAME:latest
-            docker tag $IMAGE_NAME $REPO_NAME$IMAGE_NAME:$IMAGE_VERSION
+            docker tag $IMAGE_NAME $REPO_NAME/$IMAGE_NAME:$IMAGE_VERSION
       - deploy:
           name: Publish image
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
               docker push $REPO_NAME/$IMAGE_NAME:latest
-              docker push $REPO_NAME$IMAGE_NAME:$IMAGE_VERSION
+              docker push $REPO_NAME/$IMAGE_NAME:$IMAGE_VERSION
             fi
 
 workflows:
