@@ -2,8 +2,7 @@ Gandi Dynamic DNS
 ==================
 Dynamic DNS Update Client for Gandi's LiveDNS.
 
-[![](https://circleci.com/gh/wastrachan/gandi-ddns.svg?style=svg)](https://circleci.com/gh/wastrachan/gandi-ddns)
-[![](https://images.microbadger.com/badges/image/wastrachan/gandi-ddns.svg)](https://microbadger.com/images/wastrachan/gandi-ddns)
+[![](https://circleci.com/gh/wastrachan/docker-gandi-ddns.svg?style=svg)](https://circleci.com/gh/wastrachan/docker-gandi-ddns)
 [![](https://img.shields.io/gandi-ddns/pulls/wastrachan/gandi-ddns.svg)](https://hub.gandi-ddns.com/r/wastrachan/gandi-ddns)
 
 ## Install

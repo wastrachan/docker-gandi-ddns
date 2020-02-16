@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     environment:
-      IMAGE_NAME: wastrachan/docker-gandi-ddns
+      IMAGE_NAME: wastrachan/gandi-ddns
     docker:
       - image: docker:latest
     steps:
@@ -23,10 +23,6 @@ jobs:
               echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
               docker push $IMAGE_NAME:latest
             fi
-      - run:
-          name: Update MicroBadger
-          command: |
-            curl -X POST "${MICROBADGER_URL}"
 
 workflows:
   version: 2
