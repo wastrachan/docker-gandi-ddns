@@ -1,13 +1,9 @@
-FROM alpine:latest
+FROM python:3.8.1-alpine
 LABEL maintainer="Winston Astrachan"
-LABEL description="Software on Alpine Linux"
+LABEL description="Dynamic DNS Update Client for Gandi's LiveDNS"
 
-RUN apk --no-cache add software
-RUN mkdir /config
-
-COPY overlay/ /
-VOLUME /config
-EXPOSE 80/tcp
+COPY app/ /
+RUN pip install -r /requirements.txt
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["/usr/sbin/software", "-c", "/config/named.conf"]
+CMD ["crond", "-f", "-c", "/etc/crontabs/"]

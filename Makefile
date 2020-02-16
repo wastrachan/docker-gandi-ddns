@@ -1,46 +1,45 @@
-# Docker Image Makefile
+# Gandi Dynamic DNS Makefile
 #
-# Copyright (c) Winston Astrachan 2019
+# Copyright (c) Winston Astrachan 2020
 #
 help:
 	@echo ""
 	@echo "Usage: make COMMAND"
 	@echo ""
-	@echo "Docker Image makefile"
+	@echo "Gandi Dynamic DNS Makefile"
 	@echo ""
 	@echo "Commands:"
 	@echo "  build        Build and tag image"
 	@echo "  run          Start container in the background with locally mounted volume"
+	@echo "  tail         Tail logs from running docker container"
 	@echo "  stop         Stop and remove container running in the background"
 	@echo "  clean        Mark image for rebuild"
 	@echo "  delete       Delete image and mark for rebuild"
 	@echo ""
 
-build: .docker-image-template.img
+build: .gandi-ddns.img
 
-.docker-image-template.img:
-	docker build -t wastrachan/docker-image-template:latest .
+.gandi-ddns.img:
+	docker build -t wastrachan/gandi-ddns:latest .
 	@touch $@
 
 .PHONY: run
 run: build
-	docker run -v "$(CURDIR)/config:/config" \
-	           --name docker-image-template \
-	           -e PUID=1111 \
-	           -e PGID=1112 \
-	           --restart unless-stopped \
-	           -d \
-	           wastrachan/docker-image-template:latest
+	docker run --name gandi-ddns -d --restart unless-stopped wastrachan/gandi-ddns:latest
+
+.PHONY: tail
+tail:
+	docker logs -f gandi-ddns
 
 .PHONY: stop
 stop:
-	docker stop docker-image-template
-	docker rm docker-image-template
+	docker stop gandi-ddns
+	docker rm gandi-ddns
 
 .PHONY: clean
 clean:
-	rm -f .docker-image-template.img
+	rm -f .gandi-ddns.img
 
 .PHONY: delete
 delete: clean
-	docker rmi -f wastrachan/docker-image-template
+	docker rmi -f wastrachan/gandi-ddns
