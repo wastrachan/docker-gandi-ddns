@@ -1,4 +1,4 @@
-FROM python:3.9.7-alpine
+FROM python:3.10.4-alpine
 LABEL maintainer="Winston Astrachan"
 LABEL description="Dynamic DNS Update Client for Gandi's LiveDNS"
 
