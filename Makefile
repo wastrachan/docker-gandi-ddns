@@ -1,6 +1,6 @@
 # Gandi Dynamic DNS Makefile
 #
-# Copyright (c) Winston Astrachan 2020
+# Copyright (c) Winston Astrachan 2022
 #
 help:
 	@echo ""

@@ -1,9 +1,9 @@
 """
-Gandi Dynamic DNS 1.1
+Gandi Dynamic DNS 1.1.1
 
 Dynamic DNS Update Client for Gandi's LiveDNS
 
-Copyright (C) 2020 Winston Astrachan
+Copyright (C) 2022 Winston Astrachan
 Released under the terms of the MIT license
 """
 import os
