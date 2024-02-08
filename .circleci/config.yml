@@ -1,32 +1,30 @@
-version: 2
+version: 2.1
+
 jobs:
   build:
     environment:
-      REPO_NAME: "wastrachan"
-      IMAGE_NAME: "gandi-ddns"
+      IMAGE_NAME: wastrachan/gandi-ddns
       IMAGE_VERSION: "1.2"
     docker:
-      - image: docker:latest
+      - image: cimg/base:current
+    resource_class: large
     steps:
       - checkout
-      - setup_remote_docker
-      - run:
-          name: Install deps
-          command: |
-            apk --no-cache add curl
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Build image
           command: |
             docker build -t $IMAGE_NAME .
-            docker tag $IMAGE_NAME $REPO_NAME/$IMAGE_NAME:latest
-            docker tag $IMAGE_NAME $REPO_NAME/$IMAGE_NAME:$IMAGE_VERSION
+            docker tag $IMAGE_NAME $IMAGE_NAME:latest
+            docker tag $IMAGE_NAME $IMAGE_NAME:$IMAGE_VERSION
       - run:
           name: Publish image
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-              docker push $REPO_NAME/$IMAGE_NAME:latest
-              docker push $REPO_NAME/$IMAGE_NAME:$IMAGE_VERSION
+              docker push $IMAGE_NAME:latest
+              docker push $IMAGE_NAME:$IMAGE_VERSION
             fi
 
 workflows:
