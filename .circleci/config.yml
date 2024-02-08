@@ -4,7 +4,7 @@ jobs:
     environment:
       REPO_NAME: "wastrachan"
       IMAGE_NAME: "gandi-ddns"
-      IMAGE_VERSION: "1.1"
+      IMAGE_VERSION: "1.2"
     docker:
       - image: docker:latest
     steps:
@@ -20,7 +20,7 @@ jobs:
             docker build -t $IMAGE_NAME .
             docker tag $IMAGE_NAME $REPO_NAME/$IMAGE_NAME:latest
             docker tag $IMAGE_NAME $REPO_NAME/$IMAGE_NAME:$IMAGE_VERSION
-      - deploy:
+      - run:
           name: Publish image
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then

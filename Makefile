@@ -1,7 +1,3 @@
-# Gandi Dynamic DNS Makefile
-#
-# Copyright (c) Winston Astrachan 2022
-#
 help:
 	@echo ""
 	@echo "Usage: make COMMAND"
@@ -25,7 +21,12 @@ build: .gandi-ddns.img
 
 .PHONY: run
 run: build
-	docker run --name gandi-ddns -d --restart unless-stopped wastrachan/gandi-ddns:latest
+	docker run \
+	--name gandi-ddns \
+	-d --restart unless-stopped \
+	-e GANDI_KEY="12343123abcd" \
+	-e GANDI_DOMAIN="mydomain.net" \
+	wastrachan/gandi-ddns:latest
 
 .PHONY: tail
 tail:
