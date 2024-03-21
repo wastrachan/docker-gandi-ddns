@@ -29,8 +29,7 @@ push:
 
 .PHONY: run
 run: build
-	docker run -v "$(CURDIR)/config:/config" \
-	           --name gandi-ddns \
+	docker run --name gandi-ddns \
 			   --rm \
 	           -e GANDI_KEY="12343123abcd" \
 			   -e GANDI_DOMAIN="mydomain.net" \
