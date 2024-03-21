@@ -1,8 +1,15 @@
 #!/usr/bin/env sh
 set -e
 
-# Generate CRON entry
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo " Starting gandi-ddns..."
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+echo "    [+] Creating CRON entry..."
 echo "${UPDATE_SCHEDULE:-"*/5 * * * *"} python /gandi-ddns.py" > /etc/crontabs/root
 
-# Exec CMD
+echo "    [+] Running..."
+echo ""
 exec "$@"

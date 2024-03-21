@@ -1,46 +1,46 @@
+# Gandi DDNS Docker Image
+
+.PHONY: help
 help:
 	@echo ""
 	@echo "Usage: make COMMAND"
 	@echo ""
-	@echo "Gandi Dynamic DNS Makefile"
+	@echo "Docker gandi-ddns image makefile"
 	@echo ""
 	@echo "Commands:"
 	@echo "  build        Build and tag image"
+	@echo "  push         Push tagged image to registry"
 	@echo "  run          Start container in the background with locally mounted volume"
-	@echo "  tail         Tail logs from running docker container"
 	@echo "  stop         Stop and remove container running in the background"
-	@echo "  clean        Mark image for rebuild"
-	@echo "  delete       Delete image and mark for rebuild"
+	@echo "  delete       Delete all built image versions"
 	@echo ""
 
-build: .gandi-ddns.img
+IMAGE=wastrachan/gandi-ddns
+TAG=latest
+REGISTRY=docker.io
 
-.gandi-ddns.img:
-	docker build -t wastrachan/gandi-ddns:latest .
-	@touch $@
+.PHONY: build
+build:
+	@docker build -t ${REGISTRY}/${IMAGE}:${TAG} .
+
+.PHONY: push
+push:
+	@docker push ${REGISTRY}/${IMAGE}:${TAG}
 
 .PHONY: run
 run: build
-	docker run \
-	--name gandi-ddns \
-	-d --restart unless-stopped \
-	-e GANDI_KEY="12343123abcd" \
-	-e GANDI_DOMAIN="mydomain.net" \
-	wastrachan/gandi-ddns:latest
-
-.PHONY: tail
-tail:
-	docker logs -f gandi-ddns
+	docker run -v "$(CURDIR)/config:/config" \
+	           --name gandi-ddns \
+			   --rm \
+	           -e GANDI_KEY="12343123abcd" \
+			   -e GANDI_DOMAIN="mydomain.net" \
+	           -d \
+	           ${REGISTRY}/${IMAGE}:${TAG}
 
 .PHONY: stop
 stop:
-	docker stop gandi-ddns
-	docker rm gandi-ddns
-
-.PHONY: clean
-clean:
-	rm -f .gandi-ddns.img
+	@docker stop gandi-ddns
 
 .PHONY: delete
-delete: clean
-	docker rmi -f wastrachan/gandi-ddns
+delete:
+	@docker image ls | grep ${IMAGE} | awk '{print $$3}' | xargs -I + docker rmi +

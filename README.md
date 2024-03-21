@@ -15,7 +15,15 @@ Pull the latest image from Docker Hub:
 docker pull wastrachan/gandi-ddns
 ```
 
-#### Manually
+#### Github Container Registry
+
+Or, pull from the GitHub Container Registry:
+
+```shell
+docker pull ghcr.io/wastrachan/gandi-ddns
+```
+
+#### Build From Source
 
 Clone this repository, and run `make build` to build an image:
 
@@ -25,8 +33,6 @@ cd gandi-ddns
 make build
 ```
 
-If you need to rebuild the image, run `make clean build`.
-
 ## Run
 
 #### Docker
@@ -35,9 +41,9 @@ Run this image with the `make run` shortcut, or manually with `docker run`. You'
 
 ```shell
 docker run --name gandi-ddns \
+           --rm \
            -e GANDI_KEY="12343123abcd" \
            -e GANDI_DOMAIN="mydomain.net" \
-           --restart unless-stopped \
            wastrachan/gandi-ddns:latest
 ```
 
