@@ -1,5 +1,3 @@
-# Gandi DDNS Docker Image
-
 .PHONY: help
 help:
 	@echo ""

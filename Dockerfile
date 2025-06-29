@@ -1,4 +1,4 @@
-FROM python:3.12-alpine
+FROM python:3.13-alpine
 
 LABEL org.opencontainers.image.title="Gandi DDNS"
 LABEL org.opencontainers.image.description="Dynamic DNS Update Client for Gandi's LiveDNS"
