@@ -60,6 +60,7 @@ Configuration is accomplished through the use of environment variables. The incl
 | `GANDI_PAT`       | -                                   | Personal Access Token for your [Gandi.net account](https://docs.gandi.net/en/managing_an_organization/organizations/personal_access_token.html) |
 | `GANDI_DOMAIN`    | -                                   | Your Gandi.net domain name                                                                                                                      |
 | `GANDI_RECORD`    | `@`                                 | Record to update with your IP address                                                                                                           |
+| `GANDI_TTL`       | -                                   | TTL in seconds for the updated records                                                                                                          |
 | `UPDATE_SCHEDULE` | `*/5 * * * *`                       | Cron-style schedule for dynamic-dns updates.                                                                                                    |
 
 ## License

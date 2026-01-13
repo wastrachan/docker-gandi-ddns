@@ -152,6 +152,8 @@ def update_a_record() -> None:
     elif changed:
         try:
             payload = {"rrset_values": ["{}".format(ip)]}
+            if GANDI_TTL:
+                payload["rrset_ttl"] = str(GANDI_TTL)
             response = requests.put(
                 f"{GANDI_URL}domains/{GANDI_DOMAIN}/records/{GANDI_RECORD}/A",
                 json=payload,
@@ -179,6 +181,8 @@ def update_aaaa_record() -> None:
     elif changed:
         try:
             payload = {"rrset_values": ["{}".format(ip)]}
+            if GANDI_TTL:
+                payload["rrset_ttl"] = str(GANDI_TTL)
             response = requests.put(
                 f"{GANDI_URL}domains/{GANDI_DOMAIN}/records/{GANDI_RECORD}/AAAA",
                 json=payload,
@@ -199,6 +203,7 @@ if __name__ == "__main__":
     GANDI_PAT = _get_env_var("GANDI_PAT")
     GANDI_DOMAIN = _get_env_var("GANDI_DOMAIN", required=True)
     GANDI_RECORD = _get_env_var("GANDI_RECORD", "@")
+    GANDI_TTL = _get_env_var("GANDI_TTL")
 
     # Deprecation checks
     if GANDI_KEY and GANDI_PAT:
