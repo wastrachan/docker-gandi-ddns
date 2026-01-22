@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4
+
+- Add optional `GANDI_TTL` to set the TTL for the DNS record.
+- Update dependencies
+- Update base image to latest python3.14 alpine
+
 ## 1.3
 
 - DEPRECATED: Switch from Gandi API tokens to Gandi PAT (personal access tokens). You should switch from `GANDI_KEY` TO `GANDI_PAT` as API tokens will be removed in a future version of this script

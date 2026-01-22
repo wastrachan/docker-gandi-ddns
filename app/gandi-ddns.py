@@ -1,22 +1,30 @@
 """
-Gandi Dynamic DNS 1.3
+Gandi Dynamic DNS 1.4
 
 Dynamic DNS Update Client for Gandi's LiveDNS
 
-Copyright (C) 2025 Winston Astrachan
+Copyright (C) 2026 Winston Astrachan
 Released under the terms of the MIT license
 """
 
 import os
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, TypedDict
 
 import requests
+
+
+class RRSetPayload(TypedDict, total=False):
+    rrset_values: List[str]
+    rrset_ttl: int
+
 
 CACHE_KEY_IPV4 = "/run/ipv4.last"
 CACHE_KEY_IPV6 = "/run/ipv6.last"
 
 
-def _get_env_var(name: str, default: Any = None, required: bool = False) -> str:
+def _get_env_var(
+    name: str, default: Optional[str] = None, required: bool = False
+) -> Optional[str]:
     """Get the value of an environment variable with optional default and required validation.
 
     Args:
@@ -42,7 +50,7 @@ def _get_env_var(name: str, default: Any = None, required: bool = False) -> str:
         return default
 
 
-def _get_cache_value(key: str) -> Union[Any, None]:
+def _get_cache_value(key: str) -> Optional[str]:
     """Retrieve a cached value from the filesystem.
 
     Args:
@@ -58,7 +66,7 @@ def _get_cache_value(key: str) -> Union[Any, None]:
         return None
 
 
-def _set_cache_value(key: str, value: Any) -> Any:
+def _set_cache_value(key: str, value: str) -> str:
     """Store a value in the filesystem cache.
 
     Args:
@@ -151,7 +159,9 @@ def update_a_record() -> None:
         print("Unable to fetch current IPV4 address")
     elif changed:
         try:
-            payload = {"rrset_values": ["{}".format(ip)]}
+            payload: RRSetPayload = {"rrset_values": [ip]}
+            if GANDI_TTL:
+                payload["rrset_ttl"] = int(GANDI_TTL)
             response = requests.put(
                 f"{GANDI_URL}domains/{GANDI_DOMAIN}/records/{GANDI_RECORD}/A",
                 json=payload,
@@ -178,7 +188,9 @@ def update_aaaa_record() -> None:
         print("Unable to fetch current IPV6 address")
     elif changed:
         try:
-            payload = {"rrset_values": ["{}".format(ip)]}
+            payload: RRSetPayload = {"rrset_values": [ip]}
+            if GANDI_TTL:
+                payload["rrset_ttl"] = int(GANDI_TTL)
             response = requests.put(
                 f"{GANDI_URL}domains/{GANDI_DOMAIN}/records/{GANDI_RECORD}/AAAA",
                 json=payload,
@@ -199,6 +211,7 @@ if __name__ == "__main__":
     GANDI_PAT = _get_env_var("GANDI_PAT")
     GANDI_DOMAIN = _get_env_var("GANDI_DOMAIN", required=True)
     GANDI_RECORD = _get_env_var("GANDI_RECORD", "@")
+    GANDI_TTL = _get_env_var("GANDI_TTL")
 
     # Deprecation checks
     if GANDI_KEY and GANDI_PAT:
@@ -211,6 +224,15 @@ if __name__ == "__main__":
         print(
             "GANDI_KEY is used, but Gandi API keys have been deprecated. Switch to GANDI_PAT."
         )
+
+    # Field validation
+    if GANDI_TTL:
+        try:
+            GANDI_TTL = int(GANDI_TTL)
+        except ValueError:
+            raise ValueError("GANDI_TTL must be an integer between 300 and 2592000")
+        if GANDI_TTL < 300 or GANDI_TTL > 2592000:
+            raise ValueError("GANDI_TTL must be an integer between 300 and 2592000")
 
     # Record updates
     update_a_record()

@@ -29,7 +29,7 @@ push:
 run: build
 	docker run --name gandi-ddns \
 			   --rm \
-	           -e GANDI_KEY="12343123abcd" \
+	           -e GANDI_PAT="12343123abcd" \
 			   -e GANDI_DOMAIN="mydomain.net" \
 	           -d \
 	           ${REGISTRY}/${IMAGE}:${TAG}
