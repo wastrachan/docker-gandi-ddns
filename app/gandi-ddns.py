@@ -163,7 +163,7 @@ def update_a_record() -> None:
             if GANDI_TTL:
                 payload["rrset_ttl"] = int(GANDI_TTL)
             response = requests.put(
-                f"{GANDI_URL}domains/{GANDI_DOMAIN}/records/{GANDI_RECORD}/A",
+                f"{GANDI_URL}livedns/domains/{GANDI_DOMAIN}/records/{GANDI_RECORD}/A",
                 json=payload,
                 headers=_get_headers(),
             )
@@ -192,7 +192,7 @@ def update_aaaa_record() -> None:
             if GANDI_TTL:
                 payload["rrset_ttl"] = int(GANDI_TTL)
             response = requests.put(
-                f"{GANDI_URL}domains/{GANDI_DOMAIN}/records/{GANDI_RECORD}/AAAA",
+                f"{GANDI_URL}livedns/domains/{GANDI_DOMAIN}/records/{GANDI_RECORD}/AAAA",
                 json=payload,
                 headers=_get_headers(),
             )
@@ -202,11 +202,11 @@ def update_aaaa_record() -> None:
         else:
             print(f"Set IP to {ip} for AAAA record '{GANDI_RECORD}' for {GANDI_DOMAIN}")
     else:
-        print("No change in external IP ({ip}), not updating AAAA record")
+        print(f"No change in external IP ({ip}), not updating AAAA record")
 
 
 if __name__ == "__main__":
-    GANDI_URL = _get_env_var("GANDI_URL", "https://dns.api.gandi.net/api/v5/")
+    GANDI_URL = _get_env_var("GANDI_URL", "https://api.gandi.net/v5/")
     GANDI_KEY = _get_env_var("GANDI_KEY")
     GANDI_PAT = _get_env_var("GANDI_PAT")
     GANDI_DOMAIN = _get_env_var("GANDI_DOMAIN", required=True)
