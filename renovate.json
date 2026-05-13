@@ -1,3 +1,17 @@
 {
-  "extends": ["config:base"]
+  "extends": ["config:base"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "Dockerfile"
+      ],
+      "matchStrings": [
+        "ARG SHOUTRRR_VERSION=(?<currentValue>[\\d.]+)"
+      ],
+      "depNameTemplate": "containrrr/shoutrrr",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
+    }
+  ]
 }

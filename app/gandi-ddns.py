@@ -8,6 +8,7 @@ Released under the terms of the MIT license
 """
 
 import os
+import subprocess
 from typing import Dict, List, Optional, Tuple, TypedDict
 
 import requests
@@ -97,6 +98,34 @@ def _get_headers() -> Dict[str, str]:
     return headers
 
 
+def notify(message: str) -> None:
+    """Send a notification via Shoutrrr.
+
+    Sends a notification message using the Shoutrrr CLI if SHOUTRRR_URL is set.
+    Silently skips if SHOUTRRR_URL is not configured.
+
+    Args:
+        message: The notification message to send.
+    """
+    if not SHOUTRRR_URL:
+        return
+    try:
+        result = subprocess.run(
+            ["shoutrrr", "send", "--url", SHOUTRRR_URL, "--message", message],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        if result.returncode != 0:
+            print(f"Shoutrrr notification failed: {result.stderr.strip()}")
+    except FileNotFoundError:
+        print("Shoutrrr binary not found. Skipping notification.")
+    except subprocess.TimeoutExpired:
+        print("Shoutrrr notification timed out.")
+    except Exception as e:
+        print(f"Shoutrrr notification error: {e}")
+
+
 def get_ipv4() -> Tuple[Optional[str], bool]:
     """Get the current public IPv4 address and check if it has changed.
 
@@ -152,7 +181,7 @@ def update_a_record() -> None:
 
     Checks the current public IPv4 address and updates the corresponding A record
     in Gandi's DNS service if a change is detected. Prints status messages to
-    indicate the result of the operation.
+    indicate the result of the operation. Sends a Shoutrrr notification on success.
     """
     ip, changed = get_ipv4()
     if not ip:
@@ -171,7 +200,9 @@ def update_a_record() -> None:
         except Exception as e:
             print(f"Unable to update DNS record: {e}")
         else:
-            print(f"Set IP to {ip} for A record '{GANDI_RECORD}' for {GANDI_DOMAIN}")
+            msg = f"DDNS updated: A record '{GANDI_RECORD}' for {GANDI_DOMAIN} set to {ip}"
+            print(msg)
+            notify(msg)
     else:
         print(f"No change in external IP ({ip}), not updating A record")
 
@@ -181,7 +212,7 @@ def update_aaaa_record() -> None:
 
     Checks the current public IPv6 address and updates the corresponding AAAA record
     in Gandi's DNS service if a change is detected. Prints status messages to
-    indicate the result of the operation.
+    indicate the result of the operation. Sends a Shoutrrr notification on success.
     """
     ip, changed = get_ipv6()
     if not ip:
@@ -200,7 +231,9 @@ def update_aaaa_record() -> None:
         except Exception as e:
             print(f"Unable to update DNS record: {e}")
         else:
-            print(f"Set IP to {ip} for AAAA record '{GANDI_RECORD}' for {GANDI_DOMAIN}")
+            msg = f"DDNS updated: AAAA record '{GANDI_RECORD}' for {GANDI_DOMAIN} set to {ip}"
+            print(msg)
+            notify(msg)
     else:
         print(f"No change in external IP ({ip}), not updating AAAA record")
 
@@ -212,6 +245,7 @@ if __name__ == "__main__":
     GANDI_DOMAIN = _get_env_var("GANDI_DOMAIN", required=True)
     GANDI_RECORD = _get_env_var("GANDI_RECORD", "@")
     GANDI_TTL = _get_env_var("GANDI_TTL")
+    SHOUTRRR_URL = _get_env_var("SHOUTRRR_URL")
 
     # Deprecation checks
     if GANDI_KEY and GANDI_PAT:
