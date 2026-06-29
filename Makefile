@@ -1,16 +1,15 @@
+.DEFAULT_GOAL := help
+
 .PHONY: help
-help:
+help:  ## Show this help message
 	@echo ""
-	@echo "Usage: make COMMAND"
+	@echo "Docker gandi-ddns Makefile"
+	@echo "Usage: make [target]"
 	@echo ""
-	@echo "Docker gandi-ddns image makefile"
-	@echo ""
-	@echo "Commands:"
-	@echo "  build        Build and tag image"
-	@echo "  push         Push tagged image to registry"
-	@echo "  run          Start container in the background with locally mounted volume"
-	@echo "  stop         Stop and remove container running in the background"
-	@echo "  delete       Delete all built image versions"
+	@awk 'BEGIN {FS = ":.*##"} \
+		/^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5); next } \
+		/^[a-zA-Z0-9_-]+:.*?##/ { printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2 }' \
+		$(MAKEFILE_LIST)
 	@echo ""
 
 IMAGE=wastrachan/gandi-ddns
@@ -18,15 +17,15 @@ TAG=latest
 REGISTRY=docker.io
 
 .PHONY: build
-build:
+build:  ## Build and tag image
 	@docker build -t ${REGISTRY}/${IMAGE}:${TAG} .
 
 .PHONY: push
-push:
+push:  ## Push tagged image to registry
 	@docker push ${REGISTRY}/${IMAGE}:${TAG}
 
 .PHONY: run
-run: build
+run: build  ## Start container in the background with locally mounted volume
 	docker run --name gandi-ddns \
 			   --rm \
 	           -e GANDI_PAT="12343123abcd" \
@@ -35,9 +34,9 @@ run: build
 	           ${REGISTRY}/${IMAGE}:${TAG}
 
 .PHONY: stop
-stop:
+stop:  ## Stop and remove container running in the background
 	@docker stop gandi-ddns
 
 .PHONY: delete
-delete:
+delete:  ## Delete all built image versions
 	@docker image ls | grep ${IMAGE} | awk '{print $$3}' | xargs -I + docker rmi +
